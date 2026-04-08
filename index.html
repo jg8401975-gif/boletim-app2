@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Boletim Inteligente</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #0f172a;
+    color: white;
+    text-align: center;
+}
+
+.materia {
+    background: #1e293b;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+input {
+    margin: 5px;
+    padding: 5px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>📊 Boletim Inteligente</h1>
+<div id="container"></div>
+<button onclick="calcular()">Calcular</button>
+
+<script>
+const materias = [
+"Arte","Bio1","Bio2","Geografia","Historia",
+"Fisica1","Fisica2","Quimica1","Quimica2",
+"Mat1","Mat2","Mat3",
+"Interpretacao","Literatura","Gramatica",
+"Ingles","Espanhol","Sociologia","Filosofia"
+];
+
+const container = document.getElementById("container");
+
+materias.forEach(m => {
+  container.innerHTML += `
+    <div class="materia">
+      <h3>${m}</h3>
+      <input id="${m}-mensal" placeholder="Mensal">
+      <input id="${m}-bim" placeholder="Bimestral">
+      <p id="${m}-res"></p>
+    </div>
+  `;
+});
+
+function parseNota(v){
+  return parseFloat(v.replace(",", "."));
+}
+
+function calcular(){
+  materias.forEach(m => {
+    let mensal = document.getElementById(`${m}-mensal`).value;
+    let bim = document.getElementById(`${m}-bim`).value;
+    let res = document.getElementById(`${m}-res`);
+
+    if(mensal === ""){
+      res.innerText = "Sem nota";
+      return;
+    }
+
+    mensal = parseNota(mensal);
+
+    if(bim === ""){
+      let nec = 14 - mensal;
+      res.innerText = nec > 10 
+        ? `Precisa ${nec.toFixed(2)} ❌ impossível`
+        : nec < 0 
+        ? "Já passou 🎉"
+        : `Precisa ${nec.toFixed(2)}`;
+    } else {
+      let media = (mensal + parseNota(bim)) / 2;
+      res.innerText = media >= 7 
+        ? `Média ${media.toFixed(2)} ✅`
+        : `Média ${media.toFixed(2)} ❌`;
+    }
+  });
+}
+</script>
+
+</body>
+</html>
