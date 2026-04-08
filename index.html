@@ -2,26 +2,64 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Boletim Inteligente</title>
 
 <style>
 body {
-    font-family: Arial;
+    margin: 0;
+    font-family: Arial, sans-serif;
     background: #0f172a;
     color: white;
+}
+
+h1 {
     text-align: center;
+    padding: 15px;
+}
+
+.container {
+    padding: 10px;
 }
 
 .materia {
     background: #1e293b;
-    margin: 10px;
-    padding: 10px;
-    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 12px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.materia h3 {
+    margin: 0 0 10px 0;
 }
 
 input {
-    margin: 5px;
-    padding: 5px;
+    width: 100%;
+    padding: 12px;
+    margin-top: 5px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+}
+
+.resultado {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+button {
+    position: fixed;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    padding: 15px;
+    border-radius: 15px;
+    border: none;
+    background: #22c55e;
+    color: white;
+    font-size: 18px;
 }
 </style>
 </head>
@@ -29,7 +67,9 @@ input {
 <body>
 
 <h1>📊 Boletim Inteligente</h1>
-<div id="container"></div>
+
+<div class="container" id="container"></div>
+
 <button onclick="calcular()">Calcular</button>
 
 <script>
@@ -44,47 +84,63 @@ const materias = [
 const container = document.getElementById("container");
 
 materias.forEach(m => {
-  container.innerHTML += `
+    container.innerHTML += `
     <div class="materia">
-      <h3>${m}</h3>
-      <input id="${m}-mensal" placeholder="Mensal">
-      <input id="${m}-bim" placeholder="Bimestral">
-      <p id="${m}-res"></p>
+        <h3>${m}</h3>
+        <input id="${m}-mensal" placeholder="Nota mensal">
+        <input id="${m}-bim" placeholder="Nota bimestral (opcional)">
+        <div class="resultado" id="${m}-res"></div>
     </div>
-  `;
+    `;
 });
 
 function parseNota(v){
-  return parseFloat(v.replace(",", "."));
+    return parseFloat(v.replace(",", "."));
 }
 
 function calcular(){
-  materias.forEach(m => {
-    let mensal = document.getElementById(`${m}-mensal`).value;
-    let bim = document.getElementById(`${m}-bim`).value;
-    let res = document.getElementById(`${m}-res`);
+    materias.forEach(m => {
 
-    if(mensal === ""){
-      res.innerText = "Sem nota";
-      return;
-    }
+        let mensal = document.getElementById(`${m}-mensal`).value;
+        let bim = document.getElementById(`${m}-bim`).value;
+        let res = document.getElementById(`${m}-res`);
 
-    mensal = parseNota(mensal);
+        if(mensal === ""){
+            res.innerText = "Sem nota";
+            res.style.color = "gray";
+            return;
+        }
 
-    if(bim === ""){
-      let nec = 14 - mensal;
-      res.innerText = nec > 10 
-        ? `Precisa ${nec.toFixed(2)} ❌ impossível`
-        : nec < 0 
-        ? "Já passou 🎉"
-        : `Precisa ${nec.toFixed(2)}`;
-    } else {
-      let media = (mensal + parseNota(bim)) / 2;
-      res.innerText = media >= 7 
-        ? `Média ${media.toFixed(2)} ✅`
-        : `Média ${media.toFixed(2)} ❌`;
-    }
-  });
+        mensal = parseNota(mensal);
+
+        if(bim === ""){
+            let nec = 14 - mensal;
+
+            if(nec > 10){
+                res.innerText = `Precisa ${nec.toFixed(2)} ❌ impossível`;
+                res.style.color = "red";
+            }
+            else if(nec < 0){
+                res.innerText = "Já passou 🎉";
+                res.style.color = "lightgreen";
+            }
+            else{
+                res.innerText = `Precisa ${nec.toFixed(2)}`;
+                res.style.color = "yellow";
+            }
+        } else {
+            let media = (mensal + parseNota(bim)) / 2;
+
+            if(media >= 7){
+                res.innerText = `Média ${media.toFixed(2)} ✅`;
+                res.style.color = "lightgreen";
+            } else {
+                res.innerText = `Média ${media.toFixed(2)} ❌`;
+                res.style.color = "red";
+            }
+        }
+
+    });
 }
 </script>
 
